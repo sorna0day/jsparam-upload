@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Upload JavaScript File</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 50px auto;
+            max-width: 80%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .output {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .welcome {
+            background-color: #f1f1f1;
+            color: #4CAF50;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Upload JavaScript File</h1>
+    </div>
+    <div class="container">
+        <div class="welcome">
+            <h2>Welcome to our JavaScript file uploader!</h2>
+            <br />
+            <p>Please select a JavaScript file to extract its parameters and variables.</p>
+            <br />
+        </div>
+        <br />
+        <form>
+            <div class="form-group">
+                <label for="file">Select a JavaScript file:</label>
+                <br />
+                <input type="file" id="file" name="file">
+            </div>
+            <button type="button" onclick="processFile()">Extract Parameters and Variables</button>
+        </form>
+        <div class="output">
+            <p id="sorna"></p>
+        </div>
+    </div>
+    <script>
+        function processFile() {
+            var fileInput = document.getElementById("file");
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            reader.onload = function () {
+                var code = reader.result;
+                var params = [];
+                var vars = [];
+                var regex = /(var|let|const)\s+(\w+)/g;
+                var match;
+                while ((match = regex.exec(code)) !== null) {
+                    vars.push(match[2]);
+                }
+                var jsonKeys = [];
+                var jsonRegex = /"(\w+)":/g;
+                while ((match = jsonRegex.exec(code)) !== null) {
+                    jsonKeys.push(match[1]);
+                }
+                params = vars.concat(jsonKeys);
+                var output = {
+                    "variables": vars,
+                    "parameters": params
+                };
+                var outputText = "variables:\n";
+                outputText += vars.map(function (variable) {
+                    return "  " + variable;
+                }).join("\n");
+                outputText += "\n\nparameters:\n";
+                outputText += params.map(function (parameter) {
+                    return "  " + parameter;
+                }).join("\n");
+                document.getElementById("sorna").textContent = outputText;
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+
+</html>
